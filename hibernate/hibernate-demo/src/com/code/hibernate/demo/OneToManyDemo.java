@@ -9,6 +9,7 @@ import org.hibernate.cfg.Configuration;
 import com.code.jdbc.entity.Course;
 import com.code.jdbc.entity.Instructor;
 import com.code.jdbc.entity.InstructorDetails;
+import com.code.jdbc.entity.Review;
 
 public class OneToManyDemo {
     public static void main(String[] args) {
@@ -17,6 +18,7 @@ public class OneToManyDemo {
                         .addAnnotatedClass(Instructor.class)
                         .addAnnotatedClass(InstructorDetails.class)
                         .addAnnotatedClass(Course.class)
+                        .addAnnotatedClass(Review.class)
                         .buildSessionFactory();
 
         Session session = factory.getCurrentSession();
@@ -52,8 +54,6 @@ public class OneToManyDemo {
             // session.save(course2);
             // session.save(instructor);
 
-            session.getTransaction().commit();
-
             System.out.println(instructor.toString());
 
             System.out.println(instructor.getInstructorDetails().toString());
@@ -61,6 +61,8 @@ public class OneToManyDemo {
             for(Course course : courses) {
                 System.out.println(course.toString());
             }
+
+            session.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
