@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- load the properties file -->
+    <context:property-placeholder location="classpath:sport.properties" />
+
+    <!-- Define your beans here -->
+    <bean id="myLoggerConfig" class="com.code.springdemo.MyLoggerConfig" init-method="initLogger">
+        <property name="rootLoggerLevel" value="FINE"></property>
+        <property name="printedLoggerLevel" value="FINE"></property>
+    </bean>
+    <bean id="fortuneService" class="com.code.springdemo.service.HappyFortuneService">
+    </bean>
+    <bean id="myCoach" class="com.code.springdemo.BaseballCoach">
+        <!-- Constructor injection -->
+        <constructor-arg ref="fortuneService" />
+    </bean>
+    <bean id="tCoach" class="com.code.springdemo.TrackCoach">
+        <!-- Constructor injection -->
+        <constructor-arg ref="fortuneService" />
+    </bean>
+    <bean id="cCoach" class="com.code.springdemo.CricketCoach">
+        <!-- Setter injection -->
+        <property name="fortuneService" ref="fortuneService" />
+        <!-- Inject literal values -->
+        <property name="emailAddress" value="xyz@gmail.com" />
+        <property name="team" value="xyz" />
+         <!-- Inject values from property file -->
+        <property name="size" value="${foo.size}" />
+    </bean>
+</beans>
+
+
+
+
+
