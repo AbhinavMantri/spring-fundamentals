@@ -9,6 +9,8 @@ ivy-cache
 argfile*
 activemq-data/
 classes/
+lib
+DS_Store
 
 # Log files
 jxl.log
