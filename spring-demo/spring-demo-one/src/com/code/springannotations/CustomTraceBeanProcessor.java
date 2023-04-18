@@ -1,0 +1,65 @@
+package com.code.springannotations;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.stereotype.Component;
+
+@Component
+public class CustomTraceBeanProcessor implements BeanPostProcessor, BeanFactoryAware, DisposableBean  {
+
+    private BeanFactory beanFactory;
+ 
+	private final List<Object> prototypeBeans = new LinkedList<>();
+    // simply return the instantiated bean as-is
+    public Object postProcessBeforeInitialization(Object bean, String beanName) {
+        return bean; // we could potentially return any object reference here...
+    }
+
+    public Object postProcessAfterInitialization(Object bean, String beanName) {
+        System.out.println("Bean '" + beanName + "' created : " + bean.toString());
+
+        if (beanFactory.isPrototype(beanName)) {
+			synchronized (prototypeBeans) {
+				prototypeBeans.add(bean);
+			}
+		}
+ 
+		return bean;
+    }
+
+    @Override
+	public void destroy() throws Exception {
+ 
+		// loop through the prototype beans and call the destroy() method on each one
+		
+        synchronized (prototypeBeans) {
+ 
+        	for (Object bean : prototypeBeans) {
+ 
+        		if (bean instanceof DisposableBean) {
+                    DisposableBean disposable = (DisposableBean)bean;
+                    try {
+                        disposable.destroy();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+ 
+        	prototypeBeans.clear();
+        }
+        
+	}
+
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+      this.beanFactory = beanFactory;
+    }
+}
